@@ -16,7 +16,21 @@ try{ var base = window; }catch( error ){ var base = exports; }
 			var pickObjectProperty = function pickObjectProperty( object, propertyList ){
 				var parameters = argumentsToArray( arguments );
 
-				propertyList = parameters.slice( 1 );
+				/*
+					If we have property list, otherwise get all.
+
+					This will actually do a shallow clone but this is
+						not intended for that.
+
+					This measure is done so that we are prepared if the developer
+						forgot to add the property list.
+				*/
+				if( parameters.length > 1 ){
+					propertyList = parameters.slice( 1 );	
+				}else{
+					propertyList = Object.keys( object );
+				}
+
 				var propertyListLength = propertyList.length;
 
 				var property;
@@ -30,7 +44,9 @@ try{ var base = window; }catch( error ){ var base = exports; }
 				var pickedPropertySet = { };
 				for( var index = 0; index < propertyListLength; index++ ){
 					property = propertyList[ index ];
-					pickedPropertySet[ property ] = object[ property ];
+					if( property in object ){
+						pickedPropertySet[ property ] = object[ property ];	
+					}
 				}
 
 				return pickedPropertySet;
